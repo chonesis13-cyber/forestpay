@@ -39,3 +39,8 @@ body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--forest-m
 .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; }
 .dot.regular { background: var(--forest-leaf); }
 .dot.holiday { background: var(--forest-moss); }
+
+.day-empty {
+    padding: 15px 0; /* .day와 동일한 높이 유지 */
+    cursor: default;
+}
