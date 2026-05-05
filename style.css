@@ -5,7 +5,7 @@
     --forest-mist: #F2F4F2;
     --forest-text: #0F1A13;
     --white: #FFFFFF;
-    --gold: #FFD700;
+    --gold: #FFD700; /* 실수령액 강조색 */
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -13,43 +13,47 @@ body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--forest-m
 
 .app-container { max-width: 500px; margin: 0 auto; min-height: 100vh; background: var(--white); box-shadow: 0 0 20px rgba(0,0,0,0.05); }
 
-/* 헤더 영역 */
+/* 1. 헤더 및 금액 표시 */
 .header { background-color: var(--forest-dark); color: var(--white); padding: 40px 20px; border-radius: 0 0 30px 30px; text-align: center; }
-.tagline { font-size: 0.8rem; opacity: 0.8; margin-bottom: 8px; }
+.tagline { font-size: 0.85rem; opacity: 0.9; margin-bottom: 8px; font-weight: 300; }
 #total-salary { font-size: 2.2rem; font-weight: 700; margin-bottom: 4px; }
 .summary-info { font-size: 0.9rem; opacity: 0.7; }
 
-/* 실수령액 박스 */
+/* 2. [수정됨] 실수령액 강조 박스 */
 .actual-pay-box { margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.2); display: flex; justify-content: center; gap: 10px; align-items: center; }
 .actual-pay-box .label { font-size: 0.85rem; opacity: 0.8; }
 #actual-salary { font-size: 1.4rem; font-weight: 700; color: var(--gold); }
 
-/* 메인 컨텐츠 */
+/* 3. 입력창 */
 .main-content { padding: 20px; }
 .input-group { margin-bottom: 25px; }
 .input-group label { display: block; font-size: 0.9rem; margin-bottom: 8px; font-weight: 500; }
-.input-group input { width: 100%; padding: 12px; border: 1.5px solid #ddd; border-radius: 12px; font-size: 1rem; outline: none; transition: 0.3s; }
-.input-group input:focus { border-color: var(--forest-leaf); }
+.input-group input { width: 100%; padding: 12px; border: 1.5px solid #ddd; border-radius: 12px; font-size: 1.1rem; outline: none; text-align: center; }
 
-/* 달력 영역 */
-.calendar-header { text-align: center; margin-bottom: 15px; }
+/* 4. [수정됨] 달력 헤더 및 이동 버튼 */
+.calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 0 10px; }
+.btn-nav { background: none; border: 1px solid var(--forest-moss); color: var(--forest-leaf); padding: 5px 15px; border-radius: 15px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+.btn-nav:hover { background-color: var(--forest-leaf); color: white; }
+#current-month { font-size: 1.2rem; font-weight: 700; color: var(--forest-dark); }
+
+/* 5. 달력 그리드 */
 .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
 .day { padding: 15px 0; text-align: center; cursor: pointer; border-radius: 10px; font-size: 0.9rem; transition: 0.2s; }
 .day-empty { padding: 15px 0; }
 .day:hover { background-color: #f0f0f0; }
 
-/* 날짜 상태 스타일 */
+/* 요일별 색상 */
 .day.sun { color: #d9534f; }
 .day.sat { color: #428bca; }
 .day.active { background-color: var(--forest-leaf) !important; color: white; font-weight: bold; }
 .day.active.is-holiday { background-color: var(--forest-moss) !important; }
 
-/* 하단 유틸리티 */
+/* 6. 하단 안내 및 초기화 */
 .legend { margin-top: 20px; display: flex; justify-content: center; gap: 15px; font-size: 0.8rem; opacity: 0.7; }
 .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; }
 .dot.regular { background: var(--forest-leaf); }
 .dot.holiday { background: var(--forest-moss); }
 
-.action-section { text-align: center; margin-top: 30px; padding-bottom: 20px; }
+.action-section { text-align: center; margin-top: 30px; padding-bottom: 30px; }
 .btn-reset { background: none; border: 1px solid #ddd; color: #999; padding: 8px 20px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: 0.3s; }
 .btn-reset:hover { background-color: #fff1f0; color: #d9534f; border-color: #d9534f; }
