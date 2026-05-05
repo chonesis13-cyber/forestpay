@@ -95,48 +95,7 @@ function toggleDay(dateStr, el) {
 }
 
 // ★ 핵심: 급여 계산 함수 (주휴수당 + 12.6% 공제 포함)
-function calculateTotal() {
-    let total = 0;
-    let weeklyCount = {}; // 주차별 근무일수 카운트
-    
-    workDays.forEach(dateStr => {
-        const d = new Date(dateStr);
-        
-        // 1. 기본 급여 (평일 1.0, 휴일 1.5)
-        const isHoliday = d.getDay() === 0 || d.getDay() === 6 || holidays2026.includes(dateStr);
-        const rate = isHoliday ? 1.5 : 1.0;
-        total += currentWage * rate;
 
-        // 2. 주휴수당 계산을 위해 주차 파악
-        const weekNum = getWeekNumber(d);
-        weeklyCount[weekNum] = (weeklyCount[weekNum] || 0) + 1;
-    });
-
-    // 3. 주휴수당 합산 (한 주 5일 이상 근무 시 하루치 일당 추가)
-    let allowance = 0;
-    Object.values(weeklyCount).forEach(count => {
-        if (count >= 5) allowance += Number(currentWage);
-    });
-
-    const preTaxTotal = total + allowance; // 세전 총액
-
-    // 4. 공제율 적용 (재상님 기준 12.6%)
-    const taxRate = 0.126;
-    const actualPay = preTaxTotal * (1 - taxRate);
-
-    // 5. 화면 업데이트
-    totalDisplay.innerText = `₩ ${preTaxTotal.toLocaleString()}`;
-    if (actualDisplay) {
-        actualDisplay.innerText = `₩ ${Math.floor(actualPay).toLocaleString()}`;
-    }
-    
-    const summaryEl = document.querySelector('.summary-info');
-    if (allowance > 0) {
-        summaryEl.innerText = `주휴수당 포함 (공제 전)`;
-    } else {
-        summaryEl.innerText = `이번 달 예상 세전 총액`;
-    }
-}
 
 // 주차 계산 보조 함수
 function getWeekNumber(d) {
