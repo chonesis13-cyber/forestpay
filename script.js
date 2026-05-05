@@ -108,44 +108,43 @@ function calculateTotal() {
     let total = 0;
     let weeklyCount = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
     
-    // [1] 유급 휴일 기본 수당 자동 합산 (체크 안 해도 1.0 지급)
-    total += paidHolidays.length * currentWage;
+    // 유급 휴일 설정
+    const paidHolidays = ["2026-05-01", "2026-05-05"]; 
+    
+    // [수정 포인트] 선택된 날짜가 하나라도 있을 때만 유급 휴일을 계산에 포함합니다.
+    if (workDays.length > 0) {
+        total += paidHolidays.length * currentWage;
+    }
 
     workDays.forEach(dateStr => {
         const d = new Date(dateStr);
         const isSunOrSat = d.getDay() === 0 || d.getDay() === 6;
         const isPublicHoliday = holidays2026.includes(dateStr);
         
-        // [2] 근무 수당 계산
         if (paidHolidays.includes(dateStr)) {
-            // 유급휴일에 근무 시: 추가 0.5배 (총 1.5배)
+            // 유급휴일에 실제 근무 시: 추가 0.5배 (총 1.5배)
             total += currentWage * 0.5;
         } else if (isSunOrSat || isPublicHoliday) {
-            // 주말/일반공휴일 근무 시: 1.5배
             total += currentWage * 1.5;
         } else {
-            // 평일 근무 시: 1.0배
             total += currentWage * 1.0;
         }
 
-        // [3] 주차별 근무일 카운트 (주휴수당용)
         const weekNum = getWeekNumber(d);
         weeklyCount[weekNum] = (weeklyCount[weekNum] || 0) + 1;
     });
 
-    // [4] 주휴수당 계산 (주 5일 이상 개근 시 1.0 추가)
+    // 주휴수당 계산
     let weeklyAllowance = 0;
     Object.values(weeklyCount).forEach(count => {
         if (count >= 5) weeklyAllowance += Number(currentWage);
     });
 
     const preTaxTotal = total + weeklyAllowance;
-
-    // [5] 보수적 공제율 적용 (12.6%)
     const taxRate = 0.126;
     const actualPay = preTaxTotal * (1 - taxRate);
 
-    // [6] UI 업데이트
+    // UI 업데이트
     totalDisplay.innerText = `₩ ${Math.floor(preTaxTotal).toLocaleString()}`;
     if (actualDisplay) {
         actualDisplay.innerText = `₩ ${Math.floor(actualPay).toLocaleString()}`;
@@ -153,10 +152,13 @@ function calculateTotal() {
     
     const summaryEl = document.querySelector('.summary-info');
     if (summaryEl) {
-        summaryEl.innerText = weeklyAllowance > 0 ? "주휴 및 유급수당 포함 (세전)" : "유급수당 포함 (세전)";
+        if (workDays.length === 0) {
+            summaryEl.innerText = "날짜를 선택하면 계산이 시작됩니다";
+        } else {
+            summaryEl.innerText = weeklyAllowance > 0 ? "주휴 및 유급수당 포함 (세전)" : "유급수당 포함 (세전)";
+        }
     }
 }
-
 // 주차 계산 보조 함수
 function getWeekNumber(d) {
     const firstDay = new Date(d.getFullYear(), d.getMonth(), 1).getDay();
