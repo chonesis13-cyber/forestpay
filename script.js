@@ -73,11 +73,47 @@ function toggleDay(dateStr, el) {
 
 function calculateTotal() {
     let total = 0;
+    let weeklyCount = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }; // 각 주차별 근무일수 저장
+    
     workDays.forEach(dateStr => {
         const d = new Date(dateStr);
+        
+        // 1. 기본 급여 계산 (주말/공휴일 1.5배)
         const isHoliday = d.getDay() === 0 || d.getDay() === 6 || holidays2026.includes(dateStr);
         const rate = isHoliday ? 1.5 : 1.0;
         total += currentWage * rate;
+
+        // 2. 주휴수당을 위한 주차 계산 (월~일 기준)
+        const weekNum = getWeekNumber(d);
+        weeklyCount[weekNum] = (weeklyCount[weekNum] || 0) + 1;
     });
+
+    // 3. 주휴수당 합산: 한 주에 5일 이상 근무 시 하루치 일당 추가
+    let allowance = 0;
+    Object.values(weeklyCount).forEach(count => {
+        if (count >= 5) {
+            allowance += Number(currentWage);
+        }
+    });
+
+    total += allowance;
+
+    // 화면 표시
     totalDisplay.innerText = `₩ ${total.toLocaleString()}`;
+    
+    // 주휴수당 발생 시 안내 문구 (선택 사항)
+    const summaryEl = document.querySelector('.summary-info');
+    if (allowance > 0) {
+        summaryEl.innerText = `주휴수당 ${allowance.toLocaleString()}원 포함`;
+        summaryEl.style.color = 'var(--forest-moss)'; // 이끼색으로 강조
+    } else {
+        summaryEl.innerText = `이번 달 예상 수령액`;
+        summaryEl.style.color = 'inherit';
+    }
+}
+
+// 해당 날짜가 그 달의 몇 번째 주인지 계산하는 함수
+function getWeekNumber(d) {
+    const firstDay = new Date(d.getFullYear(), d.getMonth(), 1).getDay();
+    return Math.ceil((d.getDate() + firstDay) / 7);
 }
