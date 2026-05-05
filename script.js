@@ -117,3 +117,26 @@ function getWeekNumber(d) {
     const firstDay = new Date(d.getFullYear(), d.getMonth(), 1).getDay();
     return Math.ceil((d.getDate() + firstDay) / 7);
 }
+
+const resetBtn = document.getElementById('reset-btn');
+
+resetBtn.addEventListener('click', () => {
+    // 1. 사용자에게 확인 받기
+    if (confirm("모든 근무 기록과 설정된 일당이 삭제됩니다. 초기화할까요?")) {
+        
+        // 2. 저장된 데이터 삭제
+        localStorage.removeItem('forest-pay-wage');
+        localStorage.removeItem('forest-pay-days');
+        
+        // 3. 변수 초기화 및 화면 새로고침
+        currentWage = 0;
+        workDays = [];
+        
+        // UI 반영
+        wageInput.value = '';
+        renderCalendar();
+        calculateTotal();
+        
+        alert("기록이 맑게 정리되었습니다. 🌲");
+    }
+});
