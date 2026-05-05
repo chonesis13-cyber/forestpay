@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>포레스트 페이 | Forest Pay</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- 구글 폰트 (Pretendard 대용) -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-content">
+                <p class="tagline">당신의 땀방울이 숲을 이룹니다</p>
+                <h1 id="total-salary">₩ 0</h1>
+                <p class="summary-info">이번 달 예상 수령액</p>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <section class="input-section">
+                <div class="input-group">
+                    <label for="daily-wage">나의 일당 (원)</label>
+                    <input type="number" id="daily-wage" placeholder="예: 150000" step="1000">
+                </div>
+            </section>
+
+            <section class="calendar-section">
+                <div class="calendar-header">
+                    <button id="prev-month">&lt;</button>
+                    <h2 id="current-month">2026년 5월</h2>
+                    <button id="next-month">&gt;</button>
+                </div>
+                <div class="calendar-grid" id="calendar-grid">
+                    <!-- JS에서 날짜가 생성됩니다 -->
+                </div>
+            </section>
+
+            <section class="legend">
+                <span><span class="dot regular"></span> 평일(1.0)</span>
+                <span><span class="dot holiday"></span> 휴일/주말(1.5)</span>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
