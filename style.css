@@ -61,3 +61,24 @@ body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--forest-m
     color: #d9534f;
     border-color: #d9534f;
 }
+
+.actual-pay-box {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed rgba(255,255,255,0.2);
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    align-items: center;
+}
+
+.actual-pay-box .label {
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+#actual-salary {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #FFD700; /* 황금색으로 포인트 (숲 속의 보물 같은 느낌) */
+}
