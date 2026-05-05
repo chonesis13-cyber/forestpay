@@ -20,12 +20,24 @@ wageInput.addEventListener('input', (e) => {
 
 function renderCalendar() {
     grid.innerHTML = '';
-    const now = new Date(); // 2026년 5월 기준 (현재 시간 반영)
+    const now = new Date(); 
     const year = now.getFullYear();
-    const month = now.getMonth();
+    const month = now.getMonth(); // 5월은 index 4입니다.
     
+    // 1. 이번 달의 1일이 무슨 요일인지 계산 (0: 일요일, ... 5: 금요일)
+    const firstDayIndex = new Date(year, month, 1).getDay();
+    
+    // 2. 이번 달의 마지막 날짜 계산
     const lastDay = new Date(year, month + 1, 0).getDate();
 
+    // 3. 1일 시작 전까지 빈칸 채우기
+    for (let x = 0; x < firstDayIndex; x++) {
+        const emptyDiv = document.createElement('div');
+        emptyDiv.classList.add('day-empty'); // 스타일을 위해 클래스 추가
+        grid.appendChild(emptyDiv);
+    }
+
+    // 4. 실제 날짜 채우기
     for (let i = 1; i <= lastDay; i++) {
         const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
         const dateObj = new Date(year, month, i);
