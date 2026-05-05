@@ -44,3 +44,20 @@ body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--forest-m
     padding: 15px 0; /* .day와 동일한 높이 유지 */
     cursor: default;
 }
+
+.btn-reset {
+    background: none;
+    border: 1px solid #d9d9d9;
+    color: #888;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-reset:hover {
+    background-color: #fcecea; /* 아주 연한 붉은색 */
+    color: #d9534f;
+    border-color: #d9534f;
+}
