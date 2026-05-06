@@ -3,50 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>포레스트 페이 | Forest Pay</title>
+    <title>Forest Pay - 초록지기 급여 계산기</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="app-container">
         <header class="header">
-            <div class="header-content">
-                <p class="tagline">강북구 공원녹지과 화이팅!</p>
-                <h1 id="total-salary">₩ 0</h1>
-                <p class="summary-info">이번 달 예상 세전 총액</p>
-                
-                <div class="actual-pay-box">
-                    <span class="label">실수령액(예상):</span>
-                    <span id="actual-salary">₩ 0</span>
-                </div>
+            <p class="tagline">강북구 공원녹지과 화이팅 🌳</p>
+            <h1 id="total-salary">₩ 0</h1>
+            <p class="summary-info">이번 달 예상 정산액 (세전)</p>
+            
+            <div class="actual-pay-box">
+                <span class="label">실수령액(공제 12.6%) :</span>
+                <span id="actual-salary">₩ 0</span>
             </div>
         </header>
 
         <main class="main-content">
-            <section class="input-section">
+            <div class="input-section">
                 <div class="input-group">
-                    <label for="daily-wage">나의 일당 (원)</label>
-                    <input type="number" id="daily-wage" placeholder="예: 150000" step="1000">
+                    <label for="daily-wage">기본 일당 (원)</label>
+                    <input type="number" id="daily-wage" placeholder="예: 95480" step="10">
                 </div>
-            </section>
+                <div class="input-group">
+                    <label for="monthly-leave-pay">월차 수당 (원)</label>
+                    <input type="number" id="monthly-leave-pay" placeholder="받을 월차 수당 입력">
+                </div>
+            </div>
 
             <section class="calendar-section">
-    <div class="calendar-header">
-        <button id="prev-month" class="btn-nav">&lt;</button>
-        <h2 id="current-month">2026년 5월</h2>
-        <button id="next-month" class="btn-nav">&gt;</button>
-    </div>
-    <div class="calendar-grid" id="calendar-grid"></div>
-</section>
+                <div class="calendar-header">
+                    <button id="prev-month" class="btn-nav">&lt;</button>
+                    <h2 id="current-month">2026년 5월</h2>
+                    <button id="next-month" class="btn-nav">&gt;</button>
+                </div>
+                <div class="calendar-grid" id="calendar-grid"></div>
+            </section>
 
             <section class="legend">
-                <span><span class="dot regular"></span> 평일(1.0)</span>
-                <span><span class="dot holiday"></span> 휴일/주말(1.5)</span>
+                <span><span class="dot regular"></span> 근무(1.0)</span>
+                <span><span class="dot extra"></span> 특근(1.5)</span>
+                <p class="guide-text">* 날짜를 여러 번 누르면 상태가 바뀝니다.</p>
             </section>
 
-            <section class="action-section">
-                <button id="reset-btn" class="btn-reset">기록 초기화</button>
-            </section>
+            <div class="action-section">
+                <button id="reset-btn" class="btn-reset">데이터 초기화</button>
+            </div>
         </main>
     </div>
     <script src="script.js"></script>
