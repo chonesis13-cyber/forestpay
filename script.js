@@ -1,12 +1,14 @@
-// [1] 변수 설정 및 초기화
-let currentWage = localStorage.getItem('forest-pay-wage') || 0;
-let workDays = JSON.parse(localStorage.getItem('forest-pay-days')) || []; 
+/**
+ * Forest Pay - 재상님 & 동료들을 위한 최종본
+ * 클릭 순서: 1번(일반 1.0) -> 2번(특근 1.5) -> 3번(취소)
+ */
 
-// 현재 보고 있는 달력을 추적하기 위한 날짜 객체 (기본값: 오늘)
+let currentWage = localStorage.getItem('forest-pay-wage') || 0;
+// 날짜별 상태를 저장 (예: {"2026-05-01": "regular", "2026-05-05": "extra"})
+let workData = JSON.parse(localStorage.getItem('forest-pay-data-obj')) || {};
 let viewDate = new Date(); 
 
-const holidays2026 = ["2026-01-01", "2026-03-01", "2026-05-05", "2026-05-24", "2026-06-06", "2026-08-15", "2026-10-03", "2026-10-09", "2026-12-25"];
-const specialHolidays = ["2026-05-01", "2026-05-05"]; 
+const holidays2026 = ["2026-01-01", "2026-02-16", "2026-02-17", "2026-02-18", "2026-03-01", "2026-03-02", "2026-05-01", "2026-05-05", "2026-05-24", "2026-05-25", "2026-06-06", "2026-08-15", "2026-08-17", "2026-09-24", "2026-09-25", "2026-09-26", "2026-10-03", "2026-10-05", "2026-10-09", "2026-12-25"];
 
 const wageInput = document.getElementById('daily-wage');
 const totalDisplay = document.getElementById('total-salary');
@@ -16,19 +18,16 @@ const monthDisplay = document.getElementById('current-month');
 const resetBtn = document.getElementById('reset-btn');
 
 wageInput.value = currentWage;
-
-// 초기 실행
 renderCalendar();
 calculateTotal();
 
-// [2] 이벤트 리스너
+// 이벤트 리스너
 wageInput.addEventListener('input', (e) => {
     currentWage = e.target.value;
     localStorage.setItem('forest-pay-wage', currentWage);
     calculateTotal();
 });
 
-// 이전 달/다음 달 이동 버튼 이벤트
 document.getElementById('prev-month').addEventListener('click', () => {
     viewDate.setMonth(viewDate.getMonth() - 1);
     renderCalendar();
@@ -46,7 +45,7 @@ if (resetBtn) {
         if (confirm("모든 기록을 초기화할까요?")) {
             localStorage.clear();
             currentWage = 0;
-            workDays = [];
+            workData = {};
             wageInput.value = '';
             renderCalendar();
             calculateTotal();
@@ -54,15 +53,11 @@ if (resetBtn) {
     });
 }
 
-// [3] 달력 그리기 함수
 function renderCalendar() {
     if (!grid) return;
     grid.innerHTML = '';
-    
     const year = viewDate.getFullYear();
     const month = viewDate.getMonth();
-    
-    // 헤더 텍스트 업데이트 (예: 2026년 5월)
     monthDisplay.innerText = `${year}년 ${month + 1}월`;
     
     const firstDayIndex = new Date(year, month, 1).getDay();
@@ -82,11 +77,13 @@ function renderCalendar() {
         dayEl.classList.add('day');
         dayEl.innerText = i;
         
-        const isHoliday = dayOfWeek === 0 || dayOfWeek === 6 || holidays2026.includes(dateStr);
         if (dayOfWeek === 0) dayEl.classList.add('sun');
         if (dayOfWeek === 6) dayEl.classList.add('sat');
-        if (isHoliday) dayEl.classList.add('is-holiday');
-        if (workDays.includes(dateStr)) dayEl.classList.add('active');
+        if (holidays2026.includes(dateStr)) dayEl.classList.add('is-holiday');
+        
+        // 상태에 따른 클래스 부여
+        if (workData[dateStr] === "regular") dayEl.classList.add('active');
+        if (workData[dateStr] === "extra") dayEl.classList.add('active', 'extra');
 
         dayEl.onclick = () => toggleDay(dateStr, dayEl);
         grid.appendChild(dayEl);
@@ -94,35 +91,34 @@ function renderCalendar() {
 }
 
 function toggleDay(dateStr, el) {
-    if (workDays.includes(dateStr)) {
-        workDays = workDays.filter(d => d !== dateStr);
-        el.classList.remove('active');
-    } else {
-        workDays.push(dateStr);
+    if (!workData[dateStr]) {
+        workData[dateStr] = "regular";
         el.classList.add('active');
+    } else if (workData[dateStr] === "regular") {
+        workData[dateStr] = "extra";
+        el.classList.add('extra');
+    } else {
+        delete workData[dateStr];
+        el.classList.remove('active', 'extra');
     }
-    localStorage.setItem('forest-pay-days', JSON.stringify(workDays));
+    localStorage.setItem('forest-pay-data-obj', JSON.stringify(workData));
     calculateTotal();
 }
 
-// [4] 계산 로직 (기존 유지)
 function calculateTotal() {
     let total = 0;
     let weeklyCount = {}; 
     
-    workDays.forEach(dateStr => {
+    Object.keys(workData).forEach(dateStr => {
         const d = new Date(dateStr);
-        // 현재 보고 있는 월의 데이터만 계산에 포함 (다른 달 기록은 제외)
+        // 현재 보고 있는 월만 계산
         if (d.getFullYear() === viewDate.getFullYear() && d.getMonth() === viewDate.getMonth()) {
-            const isSunOrSat = d.getDay() === 0 || d.getDay() === 6;
-            const isPublicHoliday = holidays2026.includes(dateStr);
+            const status = workData[dateStr];
             
-            if (specialHolidays.includes(dateStr)) {
-                total += currentWage * 1.0;
-            } else if (isSunOrSat || isPublicHoliday) {
-                total += currentWage * 1.5;
+            if (status === "extra") {
+                total += currentWage * 1.5; // 특근은 무조건 1.5배
             } else {
-                total += currentWage * 1.0;
+                total += currentWage * 1.0; // 일반 근무는 무조건 1.0배
             }
 
             const weekNum = getWeekNumber(d);
@@ -139,13 +135,11 @@ function calculateTotal() {
     const taxRate = 0.126;
     const actualPay = preTaxTotal * (1 - taxRate);
 
-    if (totalDisplay) totalDisplay.innerText = `₩ ${Math.floor(preTaxTotal).toLocaleString()}`;
+    totalDisplay.innerText = `₩ ${Math.floor(preTaxTotal).toLocaleString()}`;
     if (actualDisplay) actualDisplay.innerText = `₩ ${Math.floor(actualPay).toLocaleString()}`;
     
     const summaryEl = document.querySelector('.summary-info');
-    if (summaryEl) {
-        summaryEl.innerText = allowance > 0 ? "주휴수당 포함 (세전)" : "이번 달 예상 세전 총액";
-    }
+    if (summaryEl) summaryEl.innerText = allowance > 0 ? "주휴수당 포함 (세전)" : "이번 달 예상 세전 총액";
 }
 
 function getWeekNumber(d) {
