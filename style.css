@@ -57,3 +57,11 @@ body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--forest-m
 .action-section { text-align: center; margin-top: 30px; padding-bottom: 30px; }
 .btn-reset { background: none; border: 1px solid #ddd; color: #999; padding: 8px 20px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: 0.3s; }
 .btn-reset:hover { background-color: #fff1f0; color: #d9534f; border-color: #d9534f; }
+
+/* 특근(1.5배) 상태: 주황색 계열로 강조 */
+.day.active.extra {
+    background-color: #E67E22 !important; 
+    color: white;
+}
+
+/* 범례(Legend)에도 특근 설명 추가를 위해 index.html과 함께 수정하면 좋습니다 */
